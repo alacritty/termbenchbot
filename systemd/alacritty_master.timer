@@ -1,0 +1,9 @@
+[Unit]
+Description=Run Alacritty master benchmark daily
+
+[Timer]
+OnCalendar=daily
+Persistent=true
+
+[Install]
+WantedBy=timers.target

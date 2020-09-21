@@ -1,0 +1,10 @@
+[Unit]
+Description=Benchmark Alacritty master performance
+
+[Service]
+Type=oneshot
+ExecStart=/home/undeadleech/programming/linux/termbenchbot/alacritty_master.sh
+WorkingDirectory=/home/undeadleech/programming/linux/termbenchbot/
+
+[Install]
+WantedBy=multi-user.target
