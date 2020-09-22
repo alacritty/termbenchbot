@@ -7,4 +7,4 @@ ExecStart=/home/perfbot/termbenchbot/alacritty_master.sh
 WorkingDirectory=/home/perfbot/termbenchbot/
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=network-online.target

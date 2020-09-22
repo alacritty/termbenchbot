@@ -7,4 +7,4 @@ ExecStart=/home/undeadleech/termbenchbot/plot_master.sh
 WorkingDirectory=/home/undeadleech/termbenchbot/
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=network-online.target
