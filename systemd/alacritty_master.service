@@ -1,5 +1,6 @@
 [Unit]
 Description=Benchmark Alacritty master performance
+After=network.target
 
 [Service]
 Type=oneshot
@@ -7,4 +8,4 @@ ExecStart=/home/perfbot/termbenchbot/alacritty_master.sh
 WorkingDirectory=/home/perfbot/termbenchbot/
 
 [Install]
-WantedBy=network-online.target
+WantedBy=multi-user.target

@@ -1,5 +1,6 @@
 [Unit]
 Description=Plot Alacritty master performance
+After=network.target
 
 [Service]
 Type=oneshot
@@ -7,4 +8,4 @@ ExecStart=/home/undeadleech/termbenchbot/plot_master.sh
 WorkingDirectory=/home/undeadleech/termbenchbot/
 
 [Install]
-WantedBy=network-online.target
+WantedBy=multi-user.target
