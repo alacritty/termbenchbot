@@ -30,7 +30,8 @@ cargo build --release --manifest-path "$alacritty_path/Cargo.toml"
 ./bench.sh "$alacritty_path/target/release/alacritty" results/alacritty/master/
 
 # Push changes to GitHub.
+shorthash=$(git -C "$alacritty_path" rev-parse --short HEAD)
+message=$(date +"Alacritty master ($shorthash) %Y-%m-%dT%H:%M:%SZ")
 git add "$hashfile" results/alacritty/master
-message=$(date +"Alacritty master ($hash) %Y-%m-%dT%H:%M:%SZ")
 git commit -m "$message"
 git push origin master
