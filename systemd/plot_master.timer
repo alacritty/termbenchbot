@@ -2,7 +2,7 @@
 Description=Plot Alacritty master performance daily
 
 [Timer]
-OnCalendar=*-*-* 1:00:00
+OnCalendar=*-*-* 01:00:00 UTC
 Persistent=true
 
 [Install]
