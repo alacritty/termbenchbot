@@ -1,6 +1,6 @@
 [Unit]
 Description=Plot Alacritty master performance
-After=network.target
+After=network-online.target
 
 [Service]
 Type=oneshot

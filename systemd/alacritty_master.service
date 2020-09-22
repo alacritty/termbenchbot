@@ -1,9 +1,9 @@
 [Unit]
 Description=Benchmark Alacritty master performance
-After=network.target
 
 [Service]
 Type=oneshot
+ExecStart=/bin/sleep 180
 ExecStart=/home/perfbot/termbenchbot/alacritty_master.sh
 WorkingDirectory=/home/perfbot/termbenchbot/
 
