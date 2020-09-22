@@ -42,7 +42,7 @@ sudo -u $user cargo build --release --manifest-path "$alacritty_path/Cargo.toml"
 
 # Push changes to GitHub.
 shorthash=$(git -C "$alacritty_path" rev-parse --short HEAD)
-message=$(date +"Alacritty master ($shorthash) %Y-%m-%dT%H:%M:%SZ")
+message=$(date +"Add results for Alacritty master ($shorthash)")
 sudo -u $user git add "$hashfile" results/alacritty/master
 sudo -u $user git commit -m "$message"
 sudo -u $user git push origin master
