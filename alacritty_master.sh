@@ -2,8 +2,9 @@
 
 user="perfbot"
 hashfile="./lasthash"
+vtebench_path="/home/$user/vtebench"
 alacritty_path="/home/$user/alacritty"
-output_directory="results/alacritty/master/"
+output_directory="results/alacritty/master"
 
 # Benchmark the latest Alacritty master.
 
@@ -39,6 +40,9 @@ printf "$hash" | sudo -u $user tee "$hashfile"
 sudo -u $user cargo build --release --manifest-path "$alacritty_path/Cargo.toml"
 
 ./bench.sh "$alacritty_path/target/release/alacritty" "$output_directory"
+
+# Update the plot for the last 10 results.
+"$vtebench_path/gnuplot_summary.sh" $(ls results/alacritty/master/*.dat | tail -n 10) "$output_directory/summary.svg"
 
 # Push changes to GitHub.
 shorthash=$(git -C "$alacritty_path" rev-parse --short HEAD)
