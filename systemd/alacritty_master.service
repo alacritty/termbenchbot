@@ -3,9 +3,10 @@ Description=Benchmark Alacritty master performance
 
 [Service]
 Type=oneshot
-ExecStart=/bin/sleep 180
-ExecStart=/home/perfbot/termbenchbot/alacritty_master.sh
 WorkingDirectory=/home/perfbot/termbenchbot/
+ExecStart=/bin/sleep 180
+ExecStart=/usr/bin/git pull origin master --rebase
+ExecStart=/home/perfbot/termbenchbot/alacritty_master.sh
 
 [Install]
 WantedBy=multi-user.target
