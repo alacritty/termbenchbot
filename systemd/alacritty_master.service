@@ -5,7 +5,7 @@ Description=Benchmark Alacritty master performance
 Type=oneshot
 WorkingDirectory=/home/perfbot/termbenchbot/
 ExecStart=/bin/sleep 180
-ExecStart=/usr/bin/git pull origin master --rebase
+ExecStart=/usr/bin/sudo -u perfbot git pull origin master --rebase
 ExecStart=/home/perfbot/termbenchbot/alacritty_master.sh
 
 [Install]
