@@ -36,7 +36,7 @@ if [ "$lastversion" = "$version" ]; then
     echo "No new commits to test"
     exit
 fi
-printf "$lastversion" | sudo -u $user tee "$versionfile"
+printf "$version" | sudo -u $user tee "$versionfile"
 
 ./bench.sh "$alacritty_path/target/release/alacritty" "$output_directory"
 
