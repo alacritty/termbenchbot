@@ -41,7 +41,7 @@ printf "$version" | sudo -u $user tee "$versionfile"
 ./bench.sh "$alacritty_path/target/release/alacritty" "$output_directory"
 
 # Update the plot for the last 10 results.
-"$vtebench_path/gnuplot_summary.sh" $(ls results/alacritty/master/*.dat | tail -n 10) "$output_directory/summary.svg"
+"$vtebench_path/gnuplot/summary.sh" $(ls results/alacritty/master/*.dat | tail -n 10) "$output_directory/summary.svg"
 
 # Push changes to GitHub.
 shorthash=$(git -C "$alacritty_path" rev-parse --short HEAD)
