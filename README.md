@@ -11,7 +11,18 @@ The results for all historical benchmarks can be found in the `./results`
 directory. The last 10 runs of the latest Alacritty master are automatically
 plotted:
 
-![alacritty master](results/alacritty/master/summary.svg)
+![alacritty master summary](results/alacritty/master/charts/summary.svg)
+![alacritty master cursor_motion](results/alacritty/master/charts/cursor_motion.svg)
+![alacritty master dense_cells](results/alacritty/master/charts/dense_cells.svg)
+![alacritty master light_cells](results/alacritty/master/charts/light_cells.svg)
+![alacritty master missing](results/alacritty/master/charts/missing.svg)
+![alacritty master scrolling](results/alacritty/master/charts/scrolling.svg)
+![alacritty master scrolling_bottom_region](results/alacritty/master/charts/scrolling_bottom_region.svg)
+![alacritty master scrolling_bottom_small_region](results/alacritty/master/charts/scrolling_bottom_small_region.svg)
+![alacritty master scrolling_fullscreen](results/alacritty/master/charts/scrolling_fullscreen.svg)
+![alacritty master scrolling_top_region](results/alacritty/master/charts/scrolling_top_region.svg)
+![alacritty master scrolling_top_small_region](results/alacritty/master/charts/scrolling_top_small_region.svg)
+![alacritty master unicode](results/alacritty/master/charts/unicode.svg)
 
 ## Setup
 
