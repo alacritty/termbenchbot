@@ -40,10 +40,10 @@ printf "$version" | sudo -u $user tee "$versionfile"
 
 ./bench.sh "$alacritty_path/target/release/alacritty" "$output_directory"
 
-# Update the plots for the last 10 results.
+# Update the plots.
 mkdir -p "$output_directory/charts/"
 "$vtebench_path/gnuplot/summary.sh" $(ls results/alacritty/master/*.dat | tail -n 10) "$output_directory/charts/summary.svg"
-"$vtebench_path/gnuplot/detailed.sh" $(ls results/alacritty/master/*.dat | tail -n 10) "$output_directory/charts/"
+"$vtebench_path/gnuplot/detailed.sh" $(ls results/alacritty/master/*.dat | tail -n 3) "$output_directory/charts/"
 
 # Push changes to GitHub.
 shorthash=$(git -C "$alacritty_path" rev-parse --short HEAD)
