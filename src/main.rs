@@ -1,14 +1,13 @@
 mod github;
 
-#[tokio::main]
-async fn main() {
-    let notifications = github::notifications().await;
+fn main() {
+    let notifications = github::notifications();
 
     println!("{:?}", notifications);
 
     for notification in notifications {
-        let notification = notification.read().await;
+        let notification = notification.read();
         println!("READ: {:?}", notification);
-        let _ = notification.unsubscribe().await;
+        let _ = notification.unsubscribe();
     }
 }
