@@ -13,14 +13,17 @@ mod model;
 mod schema;
 mod webserver;
 
-use github::Notification;
+use github::{Notification, UserAssociation};
 use model::{Job, NewJob};
-
-/// Text identifying that the bot has been mentioned.
-const BOT_MENTION: &str = "@perfbot";
 
 /// Time between notification updates.
 const NOTIFICATION_FREQUENCY: Duration = Duration::from_secs(30);
+
+/// List of repos tracked for benchmark requests.
+const REPO_WHITELIST: [&str; 1] = ["alacritty/alacritty"];
+
+/// Text identifying that the bot has been mentioned.
+const BOT_MENTION: &str = "@perfbot";
 
 #[tokio::main]
 async fn main() {
@@ -52,10 +55,9 @@ fn watch_notifications() -> ! {
 ///
 /// This will check if a benchmark request is valid and then insert it into the database.
 fn process_notification(connection: &SqliteConnection, notification: Notification) {
-    // TODO
     // Remove the notification.
-    // let notification = notification.read();
-    // notification.unsubscribe();
+    let notification = notification.read();
+    notification.unsubscribe();
 
     // Only process mentions on PRs.
     let pull_request = match notification.pull_request() {
@@ -65,12 +67,12 @@ fn process_notification(connection: &SqliteConnection, notification: Notificatio
 
     // Skip notifications without valid benchmark requests.
     if !pull_request.comments().iter().rev().any(|comment| {
-        // TODO: Authorize bot to read org users
-        // comment.author_association >= UserAssociation::COLLABORATOR
-        notification
-            .last_read_at
-            .as_ref()
-            .map_or(true, |last_read_at| &comment.created_at > last_read_at)
+        comment.author_association >= UserAssociation::COLLABORATOR
+            && notification
+                .last_read_at
+                .as_ref()
+                .map_or(true, |last_read_at| &comment.created_at > last_read_at)
+            && REPO_WHITELIST.contains(&notification.repository.full_name.as_str())
             && comment.body.contains(BOT_MENTION)
     }) {
         return;
