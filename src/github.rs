@@ -167,14 +167,18 @@ struct CommentRequest {
 }
 
 /// User's association with a repository.
-#[allow(clippy::upper_case_acronyms)]
 #[derive(Serialize, Deserialize, Copy, Clone, Debug, PartialEq, Eq)]
 pub enum UserAssociation {
-    NONE,
-    CONTRIBUTOR,
-    COLLABORATOR,
-    MEMBER,
-    OWNER,
+    #[serde(rename = "NONE")]
+    None,
+    #[serde(rename = "CONTRIBUTOR")]
+    Contributor,
+    #[serde(rename = "COLLABORATOR")]
+    Collaborator,
+    #[serde(rename = "MEMBER")]
+    Member,
+    #[serde(rename = "OWNER")]
+    Owner,
 }
 
 impl PartialOrd for UserAssociation {

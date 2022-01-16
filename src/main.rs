@@ -67,7 +67,7 @@ fn process_notification(connection: &SqliteConnection, notification: Notificatio
 
     // Skip notifications without valid benchmark requests.
     if !pull_request.comments().iter().rev().any(|comment| {
-        comment.author_association >= UserAssociation::COLLABORATOR
+        comment.author_association >= UserAssociation::Collaborator
             && notification
                 .last_read_at
                 .as_ref()
