@@ -1,7 +1,7 @@
 use std::env;
 
+use chrono::{Duration, NaiveDateTime, Utc};
 use diesel::prelude::*;
-use chrono::{NaiveDateTime, Utc, Duration};
 use serde::Serialize;
 
 use crate::schema::jobs::{self, dsl};
@@ -33,8 +33,7 @@ impl Job {
 
     /// Remove a job.
     pub fn delete(self, connection: &SqliteConnection) {
-        let _ = diesel::delete(dsl::jobs.filter(dsl::id.eq(self.id)))
-            .execute(connection);
+        let _ = diesel::delete(dsl::jobs.filter(dsl::id.eq(self.id))).execute(connection);
     }
 
     /// Mark job as pending for execution.
@@ -84,5 +83,5 @@ impl NewJob {
 pub fn db_connection() -> SqliteConnection {
     let database_url = env::var("DATABASE_URL").expect("DATABASE_URL environment variable missing");
     SqliteConnection::establish(&database_url)
-        .expect(&format!("Unable to find DB: {}", database_url))
+        .unwrap_or_else(|_| panic!("Unable to find DB: {}", database_url))
 }

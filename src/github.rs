@@ -3,8 +3,8 @@
 use std::cmp::Ordering;
 use std::error::Error;
 
-use chrono::DateTime;
 use chrono::offset::Utc;
+use chrono::DateTime;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
 use ureq::Response;
@@ -60,7 +60,7 @@ impl Notification {
     /// This will return an error if the subscription's subject is not a pull request.
     pub fn pull_request(&self) -> Result<PullRequest, Box<dyn Error>> {
         if self.subject.r#type != SubjectType::PullRequest {
-            return Err("subscription is not a pull request")?;
+            return Err("subscription is not a pull request".into());
         }
 
         json_request("GET", &self.subject.url, ())
@@ -167,6 +167,7 @@ struct CommentRequest {
 }
 
 /// User's association with a repository.
+#[allow(clippy::upper_case_acronyms)]
 #[derive(Serialize, Deserialize, Copy, Clone, Debug, PartialEq, Eq)]
 pub enum UserAssociation {
     NONE,

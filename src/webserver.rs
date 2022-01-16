@@ -1,10 +1,10 @@
-use rocket::{routes, get, Error, patch, post};
 use rocket::http::Status;
 use rocket::serde::json::Json;
+use rocket::{get, patch, post, routes, Error};
 use serde::Deserialize;
 
-use crate::model::{self, Job};
 use crate::github::Comment;
+use crate::model::{self, Job};
 
 /// Benchmark results request data.
 #[derive(Deserialize)]
