@@ -48,9 +48,11 @@ output_file=$(date +"$output_dir/%Y-%m-%dT%H:%M:%SZ_${version}_${rustc_version}.
 # Setup environment to improve benchmark consistency.
 echo "0" > /proc/sys/kernel/randomize_va_space
 systemctl stop autopoweroff
+systemctl stop perfbot
 
 XINITRC=/dev/null xinit /usr/bin/sudo -u $user "$term" -e "$vtebench" -s -b "$bench_dir" --dat "$output_file" --warmup 3 --max-secs 60
 
 # Recover environment setup.
 echo "2" > /proc/sys/kernel/randomize_va_space
 systemctl start autopoweroff
+systemctl start perfbot
