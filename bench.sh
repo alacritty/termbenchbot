@@ -42,7 +42,8 @@ sudo -u $user mkdir -p "$output_dir"
 output_dir=$(realpath "$output_dir")
 
 version=$("$term" --version 2> /dev/null || "$term")
-output_file=$(date +"$output_dir/%Y-%m-%dT%H:%M:%SZ_${version}.dat" | tr " " "_")
+rust_version=$(rustc -V | awk '{ print $2 }')
+output_file=$(date +"$output_dir/%Y-%m-%dT%H:%M:%SZ_${version}_${rustc_version}.dat" | tr " " "_")
 
 # Setup environment to improve benchmark consistency.
 echo "0" > /proc/sys/kernel/randomize_va_space
