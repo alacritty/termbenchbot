@@ -1,10 +1,10 @@
-use rocket::{routes, get, Error, patch, post};
 use rocket::http::Status;
 use rocket::serde::json::Json;
+use rocket::{get, patch, post, routes, Error};
 use serde::Deserialize;
 
-use crate::model::{self, Job};
 use crate::github::Comment;
+use crate::model::{self, Job};
 
 /// Benchmark results request data.
 #[derive(Deserialize)]
@@ -28,7 +28,7 @@ fn mark_started(id: i32) {
 
 /// Submit benchmark results.
 #[post("/jobs/<id>", data = "<data>")]
-fn submit_results(id: i32, data: Json<BenchmarkResults>) -> (Status, &str) {
+fn submit_results(id: i32, data: Option<Json<BenchmarkResults>>) -> (Status, &str) {
     let connection = model::db_connection();
 
     let job = match Job::from_id(&connection, id) {
@@ -37,9 +37,11 @@ fn submit_results(id: i32, data: Json<BenchmarkResults>) -> (Status, &str) {
         None => return (Status::NotFound, ""),
     };
 
-    match Comment::new(&job.comments_url, data.result) {
-        Ok(_) => job.delete(&connection),
-        Err(_) => job.mark_pending(&connection),
+    if let (Some(comments_url), Some(data)) = (&job.comments_url, data) {
+        match Comment::new(comments_url, data.result) {
+            Ok(_) => job.delete(&connection),
+            Err(_) => job.mark_pending(&connection),
+        }
     }
 
     (Status::Ok, "")

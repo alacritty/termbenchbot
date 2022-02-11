@@ -3,8 +3,8 @@
 use std::cmp::Ordering;
 use std::error::Error;
 
-use chrono::DateTime;
 use chrono::offset::Utc;
+use chrono::DateTime;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
 use ureq::Response;
@@ -60,7 +60,7 @@ impl Notification {
     /// This will return an error if the subscription's subject is not a pull request.
     pub fn pull_request(&self) -> Result<PullRequest, Box<dyn Error>> {
         if self.subject.r#type != SubjectType::PullRequest {
-            return Err("subscription is not a pull request")?;
+            return Err("subscription is not a pull request".into());
         }
 
         json_request("GET", &self.subject.url, ())
@@ -121,6 +121,28 @@ pub struct Repository {
     pub private: bool,
     pub description: String,
     pub fork: bool,
+    pub commits_url: String,
+    // Some unnecessary fields have been omitted.
+}
+
+impl Repository {
+    /// Get information about a repository.
+    pub fn get(owner: &str, repository: &str) -> Option<Repository> {
+        let url = format!("https://api.github.com/repos/{}/{}", owner, repository);
+        json_request("GET", &url, ()).ok()
+    }
+
+    /// Get the latest commits of the repository.
+    pub fn commits(&self) -> Vec<Commit> {
+        let url = &self.commits_url[..self.commits_url.len() - "{/sha}".len()];
+        json_request("GET", url, ()).unwrap_or_default()
+    }
+}
+
+/// GitHub repository commit.
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Commit {
+    pub sha: String,
     // Some unnecessary fields have been omitted.
 }
 
@@ -167,6 +189,7 @@ struct CommentRequest {
 }
 
 /// User's association with a repository.
+#[allow(clippy::upper_case_acronyms)]
 #[derive(Serialize, Deserialize, Copy, Clone, Debug, PartialEq, Eq)]
 pub enum UserAssociation {
     NONE,

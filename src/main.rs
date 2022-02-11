@@ -13,8 +13,8 @@ mod model;
 mod schema;
 mod webserver;
 
-use github::{Notification, UserAssociation};
-use model::{Job, NewJob};
+use github::{Notification, Repository, UserAssociation};
+use model::{Job, MasterBuild, NewJob, NewMasterBuild};
 
 /// Time between notification updates.
 const NOTIFICATION_FREQUENCY: Duration = Duration::from_secs(30);
@@ -30,6 +30,7 @@ async fn main() {
     let _ = dotenv();
 
     thread::spawn(watch_notifications);
+    thread::spawn(watch_alacritty_master);
 
     webserver::launch().await.expect("webserver crash");
 }
@@ -49,6 +50,36 @@ fn watch_notifications() -> ! {
 
         thread::sleep(NOTIFICATION_FREQUENCY);
     }
+}
+
+/// Watch for new commits on master.
+fn watch_alacritty_master() -> ! {
+    let repository = Repository::get("alacritty", "alacritty").expect("repo not found");
+
+    let connection = model::db_connection();
+
+    loop {
+        process_alacritty_master(&connection, &repository);
+        thread::sleep(NOTIFICATION_FREQUENCY);
+    }
+}
+
+/// Check the alacritty master for new updates.
+fn process_alacritty_master(connection: &SqliteConnection, repository: &Repository) {
+    let last_build = MasterBuild::latest(connection);
+    let commits = repository.commits();
+
+    // Skip if this commit has already been benchmarked.
+    if commits.is_empty() || last_build.map_or(false, |build| commits[0].sha == build.hash) {
+        return;
+    }
+
+    // Stage job.
+    let repository = repository.full_name.clone();
+    NewJob::new(repository, None, None).insert(connection);
+
+    // Update latest master build.
+    NewMasterBuild::new(commits[0].sha.clone()).insert(connection);
 }
 
 /// Process a single GitHub notification.
@@ -82,5 +113,5 @@ fn process_notification(connection: &SqliteConnection, notification: Notificatio
     let repository = notification.repository.full_name;
     let comments_url = pull_request.comments_url;
     let hash = pull_request.merge_commit_sha;
-    NewJob::new(comments_url, repository, hash).insert(connection);
+    NewJob::new(repository, comments_url, hash).insert(connection);
 }
