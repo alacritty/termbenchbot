@@ -24,6 +24,8 @@ function build_notification {
     sha="$2"
     id="$3"
 
+    echo "Running $repository/$sha benchmark…"
+
     # Build the commit in question.
     rm -rf "$bench_dir"
     sudo -u $user git clone "https://github.com/$repository" "$bench_dir"
@@ -63,8 +65,10 @@ while true; do
         curl -X PATCH "$jobs_url/$id"
 
         if [ "$sha" == "null" ]; then
+            echo "Starting Alacritty master benchmark…"
+
             cd "$termbenchbot_dir"
-            alacritty_master.sh
+            ./alacritty_master.sh
 
             curl -X POST "$jobs_url/$id"
         else
