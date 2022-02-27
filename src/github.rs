@@ -72,7 +72,7 @@ impl Notification {
 pub struct Subject {
     pub title: String,
     pub url: String,
-    pub latest_comment_url: String,
+    pub latest_comment_url: Option<String>,
     pub r#type: SubjectType,
 }
 
