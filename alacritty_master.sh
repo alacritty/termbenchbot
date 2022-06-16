@@ -30,7 +30,8 @@ sudo -u $user git -C "$alacritty_path" pull origin master --rebase
 sudo -u $user cargo build --release --manifest-path "$alacritty_path/Cargo.toml"
 
 # Check if there has been any new changes.
-version=$("$alacritty_path/target/release/alacritty" --version)
+rustversion=$(sudo -u $user rustc -V)
+version=$(echo "$($alacritty_path/target/release/alacritty --version) - $rustversion)")
 lastversion=$(cat "$versionfile")
 if [ "$lastversion" = "$version" ]; then
     echo "No new commits to test"
