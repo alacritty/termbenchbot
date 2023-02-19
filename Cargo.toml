@@ -5,8 +5,8 @@ edition = "2018"
 
 [dependencies]
 tokio = { version = "1.19.2", features = ["rt-multi-thread", "macros"] }
-diesel = { version = "1.4.7", features = ["sqlite", "chrono"] }
-rocket = { version = "0.5.0-rc.1", features = ["json"] }
+diesel = { version = "2.0.3", features = ["sqlite", "chrono"] }
+rocket = { version = "0.5.0-rc.2", features = ["json"] }
 chrono = { version = "0.4.19", features = ["serde"] }
 ureq = { version = "2.2.0", features = ["json"] }
 serde = { version = "1.0.130", features = ["derive"] }

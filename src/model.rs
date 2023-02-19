@@ -22,36 +22,36 @@ pub struct Job {
 
 impl Job {
     /// Get all staged jobs.
-    pub fn all(connection: &SqliteConnection) -> Vec<Self> {
+    pub fn all(connection: &mut SqliteConnection) -> Vec<Self> {
         job::dsl::job.load(connection).unwrap_or_default()
     }
 
     /// Load a specific job using its ID.
-    pub fn from_id(connection: &SqliteConnection, id: i32) -> Option<Self> {
+    pub fn from_id(connection: &mut SqliteConnection, id: i32) -> Option<Self> {
         job::dsl::job.filter(job::dsl::id.eq(id)).first(connection).ok()
     }
 
     /// Remove a job.
-    pub fn delete(self, connection: &SqliteConnection) {
+    pub fn delete(self, connection: &mut SqliteConnection) {
         let _ = diesel::delete(job::dsl::job.filter(job::dsl::id.eq(self.id))).execute(connection);
     }
 
     /// Mark job as pending for execution.
-    pub fn mark_pending(&self, connection: &SqliteConnection) {
+    pub fn mark_pending(&self, connection: &mut SqliteConnection) {
         let _ = diesel::update(job::dsl::job.filter(job::dsl::id.eq(self.id)))
             .set(job::dsl::started_at.eq::<Option<NaiveDateTime>>(None))
             .execute(connection);
     }
 
     /// Mark job as currently executing.
-    pub fn mark_started(connection: &SqliteConnection, id: i32) {
+    pub fn mark_started(connection: &mut SqliteConnection, id: i32) {
         let _ = diesel::update(job::dsl::job.filter(job::dsl::id.eq(id)))
             .set(job::dsl::started_at.eq(Utc::now().naive_utc()))
             .execute(connection);
     }
 
     /// Remove `started_at` from stale jobs.
-    pub fn update_stale(connection: &SqliteConnection) {
+    pub fn update_stale(connection: &mut SqliteConnection) {
         let limit = Utc::now().naive_utc() - Duration::minutes(MAX_BENCH_MINUTES);
         let _ = diesel::update(job::dsl::job.filter(job::dsl::started_at.lt(limit)))
             .set(job::dsl::started_at.eq::<Option<NaiveDateTime>>(None))
@@ -60,7 +60,7 @@ impl Job {
 }
 
 #[derive(Insertable)]
-#[table_name = "job"]
+#[diesel(table_name = job)]
 pub struct NewJob {
     pub repository: String,
     pub comments_url: Option<String>,
@@ -78,7 +78,7 @@ impl NewJob {
     }
 
     /// Insert the job in the database.
-    pub fn insert(&self, connection: &SqliteConnection) {
+    pub fn insert(&self, connection: &mut SqliteConnection) {
         let _ = diesel::insert_into(job::table).values(self).execute(connection);
     }
 }
@@ -91,7 +91,7 @@ pub struct MasterBuild {
 
 impl MasterBuild {
     /// Get the last master build entry.
-    pub fn latest(connection: &SqliteConnection) -> Option<Self> {
+    pub fn latest(connection: &mut SqliteConnection) -> Option<Self> {
         master_build::dsl::master_build
             .order_by(master_build::dsl::id.desc())
             .first(connection)
@@ -100,7 +100,7 @@ impl MasterBuild {
 }
 
 #[derive(Insertable)]
-#[table_name = "master_build"]
+#[diesel(table_name = master_build)]
 pub struct NewMasterBuild {
     pub hash: String,
 }
@@ -112,7 +112,7 @@ impl NewMasterBuild {
     }
 
     /// Insert master build into the database.
-    pub fn insert(&self, connection: &SqliteConnection) {
+    pub fn insert(&self, connection: &mut SqliteConnection) {
         let _ = diesel::insert_into(master_build::table).values(self).execute(connection);
     }
 }

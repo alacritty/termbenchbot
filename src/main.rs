@@ -37,16 +37,16 @@ async fn main() {
 
 /// Watch for new GitHub notifications.
 fn watch_notifications() -> ! {
-    let connection = model::db_connection();
+    let mut connection = model::db_connection();
 
     loop {
         // Handle all new benchmark requests.
         for notification in Notification::all() {
-            process_notification(&connection, notification);
+            process_notification(&mut connection, notification);
         }
 
         // Retry outdated jobs.
-        Job::update_stale(&connection);
+        Job::update_stale(&mut connection);
 
         thread::sleep(NOTIFICATION_FREQUENCY);
     }
@@ -56,16 +56,16 @@ fn watch_notifications() -> ! {
 fn watch_alacritty_master() -> ! {
     let repository = Repository::get("alacritty", "alacritty").expect("repo not found");
 
-    let connection = model::db_connection();
+    let mut connection = model::db_connection();
 
     loop {
-        process_alacritty_master(&connection, &repository);
+        process_alacritty_master(&mut connection, &repository);
         thread::sleep(NOTIFICATION_FREQUENCY);
     }
 }
 
 /// Check the alacritty master for new updates.
-fn process_alacritty_master(connection: &SqliteConnection, repository: &Repository) {
+fn process_alacritty_master(connection: &mut SqliteConnection, repository: &Repository) {
     let last_build = MasterBuild::latest(connection);
     let commits = repository.commits();
 
@@ -85,7 +85,7 @@ fn process_alacritty_master(connection: &SqliteConnection, repository: &Reposito
 /// Process a single GitHub notification.
 ///
 /// This will check if a benchmark request is valid and then insert it into the database.
-fn process_notification(connection: &SqliteConnection, notification: Notification) {
+fn process_notification(connection: &mut SqliteConnection, notification: Notification) {
     // Remove the notification.
     let notification = notification.read();
     notification.unsubscribe();
