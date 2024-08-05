@@ -47,7 +47,7 @@ mkdir -p "$output_directory/charts/"
 "$vtebench_path/gnuplot/detailed.sh" $(ls results/alacritty/master/*.dat | tail -n 3) "$output_directory/charts/"
 
 # Push changes to GitHub.
-shorthash=$(git -C "$alacritty_path" rev-parse --short HEAD)
+shorthash=$(sudo -u $user git -C "$alacritty_path" rev-parse --short HEAD)
 message=$(echo "Add results for Alacritty master ($shorthash)")
 sudo -u $user git add "$versionfile" results/alacritty/master
 sudo -u $user git commit -m "$message"
