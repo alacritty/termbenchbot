@@ -9,6 +9,8 @@ use serde::{Deserialize, Serialize};
 use serde_json::json;
 use ureq::Response;
 
+use crate::trace_error;
+
 /// User agent identifying this application.
 ///
 /// A valid user agent is required by the GitHub API.
@@ -42,22 +44,23 @@ impl Notification {
 
     /// Mark the notification as read.
     ///
-    /// Marking a notification as read will remove it from the list of notifications retrieved by
-    /// [`notifications`].
+    /// Marking a notification as read will remove it from the list of
+    /// notifications retrieved by [`notifications`].
     pub fn read(self) -> Self {
         json_request("PATCH", &self.url, ()).unwrap_or(self)
     }
 
     /// Remove this notification's subscription.
     pub fn unsubscribe(&self) {
-        let _ = request("DELETE", &self.subscription_url, ());
+        trace_error!(request("DELETE", &self.subscription_url, ()));
     }
 
     /// Get the subscription's PR.
     ///
     /// # Errors
     ///
-    /// This will return an error if the subscription's subject is not a pull request.
+    /// This will return an error if the subscription's subject is not a pull
+    /// request.
     pub fn pull_request(&self) -> Result<PullRequest, Box<dyn Error>> {
         if self.subject.r#type != SubjectType::PullRequest {
             return Err("subscription is not a pull request".into());

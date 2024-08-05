@@ -48,7 +48,7 @@ mkdir -p "$output_directory/charts/"
 
 # Push changes to GitHub.
 shorthash=$(git -C "$alacritty_path" rev-parse --short HEAD)
-message=$(date +"Add results for Alacritty master ($shorthash)")
+message=$(echo "Add results for Alacritty master ($shorthash)")
 sudo -u $user git add "$versionfile" results/alacritty/master
 sudo -u $user git commit -m "$message"
 sudo -u $user git push origin master

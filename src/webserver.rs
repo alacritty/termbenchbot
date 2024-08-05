@@ -39,10 +39,10 @@ fn submit_results(id: i32, data: Option<Json<BenchmarkResults>>) -> (Status, Str
 
     // Attempt to write results to the GitHub thread they were requested in.
     //
-    // On failure, we stage the request for re-execution to attempt upload again at a later point
-    // in time after potential network issues have been resolved.
+    // On failure, we stage the request for re-execution to attempt upload again at
+    // a later point in time after potential network issues have been resolved.
     if let Some((comments_url, data)) = job.comments_url.as_ref().zip(data) {
-        if let Err(err) = Comment::new(&comments_url, data.result) {
+        if let Err(err) = Comment::new(comments_url, data.result) {
             job.mark_pending(&mut connection);
             return (Status::InternalServerError, err.to_string());
         }

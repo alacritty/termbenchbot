@@ -3,8 +3,10 @@ use std::env;
 use chrono::{Duration, NaiveDateTime, Utc};
 use diesel::prelude::*;
 use serde::Serialize;
+use tracing::debug;
 
 use crate::schema::{job, master_build};
+use crate::trace_error;
 
 /// Maximum minutes before a benchmark is considered to be dead.
 const MAX_BENCH_MINUTES: i64 = 120;
@@ -33,33 +35,39 @@ impl Job {
 
     /// Remove a job.
     pub fn delete(self, connection: &mut SqliteConnection) {
-        let _ = diesel::delete(job::dsl::job.filter(job::dsl::id.eq(self.id))).execute(connection);
+        debug!("Deleting job {}", self.id);
+        trace_error!(
+            diesel::delete(job::dsl::job.filter(job::dsl::id.eq(self.id))).execute(connection)
+        );
     }
 
     /// Mark job as pending for execution.
     pub fn mark_pending(&self, connection: &mut SqliteConnection) {
-        let _ = diesel::update(job::dsl::job.filter(job::dsl::id.eq(self.id)))
+        debug!("Marking job {} as pending", self.id);
+        trace_error!(diesel::update(job::dsl::job.filter(job::dsl::id.eq(self.id)))
             .set(job::dsl::started_at.eq::<Option<NaiveDateTime>>(None))
-            .execute(connection);
+            .execute(connection));
     }
 
     /// Mark job as currently executing.
     pub fn mark_started(connection: &mut SqliteConnection, id: i32) {
-        let _ = diesel::update(job::dsl::job.filter(job::dsl::id.eq(id)))
+        debug!("Marking job {} as started", id);
+        trace_error!(diesel::update(job::dsl::job.filter(job::dsl::id.eq(id)))
             .set(job::dsl::started_at.eq(Utc::now().naive_utc()))
-            .execute(connection);
+            .execute(connection));
     }
 
     /// Remove `started_at` from stale jobs.
     pub fn update_stale(connection: &mut SqliteConnection) {
+        debug!("Clearing in-progress state for stale jobs");
         let limit = Utc::now().naive_utc() - Duration::minutes(MAX_BENCH_MINUTES);
-        let _ = diesel::update(job::dsl::job.filter(job::dsl::started_at.lt(limit)))
+        trace_error!(diesel::update(job::dsl::job.filter(job::dsl::started_at.lt(limit)))
             .set(job::dsl::started_at.eq::<Option<NaiveDateTime>>(None))
-            .execute(connection);
+            .execute(connection));
     }
 }
 
-#[derive(Insertable)]
+#[derive(Insertable, Debug)]
 #[diesel(table_name = job)]
 pub struct NewJob {
     pub repository: String,
@@ -79,7 +87,8 @@ impl NewJob {
 
     /// Insert the job in the database.
     pub fn insert(&self, connection: &mut SqliteConnection) {
-        let _ = diesel::insert_into(job::table).values(self).execute(connection);
+        debug!("Staging new job: {self:?}");
+        trace_error!(diesel::insert_into(job::table).values(self).execute(connection));
     }
 }
 
@@ -113,7 +122,8 @@ impl NewMasterBuild {
 
     /// Insert master build into the database.
     pub fn insert(&self, connection: &mut SqliteConnection) {
-        let _ = diesel::insert_into(master_build::table).values(self).execute(connection);
+        debug!("Setting latest master build to {:?}", self.hash);
+        trace_error!(diesel::insert_into(master_build::table).values(self).execute(connection));
     }
 }
 
@@ -121,5 +131,5 @@ impl NewMasterBuild {
 pub fn db_connection() -> SqliteConnection {
     let database_url = env::var("DATABASE_URL").expect("DATABASE_URL environment variable missing");
     SqliteConnection::establish(&database_url)
-        .expect(&format!("Unable to find DB: {}", database_url))
+        .unwrap_or_else(|_| panic!("Unable to find DB: {}", database_url))
 }

@@ -1,4 +1,6 @@
-table! {
+// @generated automatically by Diesel CLI.
+
+diesel::table! {
     job (id) {
         id -> Integer,
         repository -> Text,
@@ -8,11 +10,11 @@ table! {
     }
 }
 
-table! {
+diesel::table! {
     master_build (id) {
         id -> Integer,
         hash -> Text,
     }
 }
 
-allow_tables_to_appear_in_same_query!(job, master_build,);
+diesel::allow_tables_to_appear_in_same_query!(job, master_build,);
