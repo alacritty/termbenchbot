@@ -1,0 +1,12 @@
+[env]
+WINIT_X11_SCALE_FACTOR = "1"
+
+[window.dimensions]
+columns = 250
+lines = 75
+
+[font]
+size = 10.0
+
+[font.normal]
+family = "Fira Mono"
