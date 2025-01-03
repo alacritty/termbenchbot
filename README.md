@@ -15,13 +15,14 @@ plotted:
 ![alacritty master cursor_motion](results/alacritty/master/charts/cursor_motion.svg)
 ![alacritty master dense_cells](results/alacritty/master/charts/dense_cells.svg)
 ![alacritty master light_cells](results/alacritty/master/charts/light_cells.svg)
-![alacritty master missing](results/alacritty/master/charts/missing.svg)
+![alacritty master medium_cells](results/alacritty/master/charts/medium_cells.svg)
 ![alacritty master scrolling](results/alacritty/master/charts/scrolling.svg)
 ![alacritty master scrolling_bottom_region](results/alacritty/master/charts/scrolling_bottom_region.svg)
 ![alacritty master scrolling_bottom_small_region](results/alacritty/master/charts/scrolling_bottom_small_region.svg)
 ![alacritty master scrolling_fullscreen](results/alacritty/master/charts/scrolling_fullscreen.svg)
 ![alacritty master scrolling_top_region](results/alacritty/master/charts/scrolling_top_region.svg)
 ![alacritty master scrolling_top_small_region](results/alacritty/master/charts/scrolling_top_small_region.svg)
+![alacritty master sync_medium_cells](results/alacritty/master/charts/sync_medium_cells.svg)
 ![alacritty master unicode](results/alacritty/master/charts/unicode.svg)
 
 ## Setup
