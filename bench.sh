@@ -46,11 +46,13 @@ rustc_version=$(sudo -u $user rustc -V | awk '{ print $2 }')
 output_file=$(date +"$output_dir/%Y-%m-%dT%H:%M:%SZ_${version}_${rustc_version}.dat" | tr " " "_")
 
 # Setup environment to improve benchmark consistency.
+echo "1" > /sys/devices/system/cpu/intel_pstate/no_turbo
 echo "0" > /proc/sys/kernel/randomize_va_space
 systemctl stop autopoweroff
 
 XINITRC=/dev/null xinit /usr/bin/sudo -u $user "$term" -e "$vtebench" -s -b "$bench_dir" --dat "$output_file" --warmup 3 --max-secs 60
 
 # Recover environment setup.
+echo "0" > /sys/devices/system/cpu/intel_pstate/no_turbo
 echo "2" > /proc/sys/kernel/randomize_va_space
 systemctl start autopoweroff
