@@ -60,8 +60,8 @@ for file in $(ls results/alacritty/master/*.dat | tail -n 10); do
         latest_ten=$(printf "$latest_ten\n$file")
     fi
 done
-"$vtebench_path/gnuplot/summary.sh" $(echo $latest_ten) "$output_directory/charts/summary.svg"
-"$vtebench_path/gnuplot/detailed.sh" $(echo $latest_ten | tail -n 3) "$output_directory/charts/"
+"$vtebench_path/gnuplot/summary.sh" $(echo "$latest_ten") "$output_directory/charts/summary.svg"
+"$vtebench_path/gnuplot/detailed.sh" $(echo "$latest_ten" | tail -n 3) "$output_directory/charts/"
 
 # Push changes to GitHub.
 shorthash=$(sudo -u $user git -C "$alacritty_path" rev-parse --short HEAD)
